@@ -1,0 +1,24 @@
+{
+  "name": "cursor",
+  "version": "0.1.0",
+  "description": "Enables you to present a subset of a large data structer as if it was the whole thing",
+  "keywords": ["cursor","immutable"],
+  "dependencies": {
+    "inherit": "nathan7/inherit#f1a75b"
+  },
+  "devDependencies": {
+    "assert": "jkroso/assert",
+    "serve": "jkroso/serve",
+    "atom": "jkroso/cell",
+    "hydro-html": "*",
+    "immutable": "*",
+    "hydro-bdd": "*",
+    "hydro-dot": "*",
+    "hydro": "*",
+    "jsmd": "*"
+  },
+  "repository": "git://github.com/jkroso/cursor.git",
+  "author": "Jake Rosoman",
+  "files": ["index.js"],
+  "license": "MIT"
+}
