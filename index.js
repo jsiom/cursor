@@ -39,7 +39,7 @@ Cursor.prototype.get = function(key) {
  * @return {Cursor}
  */
 
-Cursor.prototype.set = function(key, value){
+Cursor.prototype.set = function(key, value) {
   var newData = this.value.set(key, value)
   var newParent = this.parent.set(this.name, newData)
   return new Cursor(newData, this.name, newParent)
@@ -84,6 +84,13 @@ function SoftCursor(atom, path) {
   this.path = path || []
 }
 
+/**
+ * Provide the cursors latest value as `cursor.value` to match
+ * the hard cursor API
+ *
+ * @return {Associative}
+ */
+
 Object.defineProperty(SoftCursor.prototype, 'value', {
   get: function(){ return this.path.reduce(get, this.atom.value) }
 })
@@ -125,7 +132,7 @@ function get(data, key) {
  * @return {Cursor}
  */
 
-function createCursor(atom, type){
+function createCursor(atom, type) {
   return type == 'soft'
     ? new SoftCursor(atom)
     : new RootCursor(atom)
