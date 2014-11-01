@@ -40,8 +40,19 @@ Cursor.prototype.get = function(key) {
  */
 
 Cursor.prototype.set = function(key, value) {
-  var newData = this.value.set(key, value)
+  return this.update(this.value.set(key, value))
+}
+
+/**
+ * Replace the cursors data within its parent
+ *
+ * @param {Any} newData
+ * @return {Cursor}
+ */
+
+Cursor.prototype.update = function(newData) {
   var newParent = this.parent.set(this.name, newData)
+  if (typeof newData != 'object') return newData
   return new Cursor(newData, this.name, newParent)
 }
 
@@ -62,82 +73,87 @@ inherit(RootCursor, Cursor)
  * Alter the atoms value and return a new RootCursor pointing to
  * the new data
  *
- * @param {String|Number} key
- * @param {Any} value
+ * @param {Any} newValue
  * @return {RootCursor}
  */
 
-RootCursor.prototype.set = function(key, value) {
-  this.atom.set(this.value.set(key, value))
+RootCursor.prototype.update = function(newValue) {
+  this.atom.set(newValue)
+  if (typeof newValue != 'object') return newValue
   return new RootCursor(this.atom)
 }
 
-/**
- * A cursor which always uses the latest value of the root atom
- *
- * @param {Atom} atom
- * @param {Array} [path]
- */
-
-function SoftCursor(atom, path) {
-  this.atom = atom
-  this.path = path || []
+RootCursor.prototype.set = function(key, value) {
+  return this.update(this.value.set(key, value))
 }
 
 /**
- * Provide the cursors latest value as `cursor.value` to match
- * the hard cursor API
- *
- * @return {Associative}
+ * Generate proxy methods. Each method will delegate to the
+ * cursors value and return the resulting value. If the return
+ * value is an associative it will be wrapped in a cursor
+ * however changes are never propagated up so if you want to
+ * affect the global state you will need to call `commit`
  */
 
-Object.defineProperty(SoftCursor.prototype, 'value', {
-  get: function(){ return this.path.reduce(get, this.atom.value) }
+;[
+  'forEach',
+  'filter',
+  'reduce',
+  'remove',
+  'splice',
+  'slice',
+  'every',
+  'push',
+  'some'
+].forEach(function(method){
+  Cursor.prototype[method] = function() {
+    var value = this.value[method].apply(this.value, arguments)
+    if (typeof value != 'object') return value
+    return new Cursor(value, this.name, this.parent)
+  }
 })
 
-SoftCursor.prototype.get = function(key) {
-  var value = this.value.get(key)
-  if (typeof value != 'object') return value
-  return new SoftCursor(this.atom, this.path.concat(key))
-}
-
-SoftCursor.prototype.set = function(key, value) {
-  var path = this.path
-  var oldVals = Array(path.length)
-  var oldVal = this.atom.value
-  var i = 0
-  for (var i = 0, len = path.length; i < len; i++) {
-    oldVals[i]  = oldVal
-    oldVal = oldVal.get(path[i])
-  }
-  var newVal = oldVal.set(key, value)
-  while (i--) {
-    var key = path[i]
-    var parent = oldVals[i]
-    newVal = parent.set(key, newVal)
-  }
-  this.atom.set(newVal)
-  return value
-}
-
-function get(data, key) {
-  return data.get(key)
-}
-
 /**
- * Create a cursor into an atom
+ * Merge the changes you made to this cursor into the
+ * global data structure
  *
- * @param {Atom} atom
- * @param {String} [type]
  * @return {Cursor}
  */
 
-function createCursor(atom, type) {
-  return type == 'soft'
-    ? new SoftCursor(atom)
-    : new RootCursor(atom)
+Cursor.prototype.commit = function(){
+  return this.update(this.value)
 }
 
-module.exports = exports = createCursor
-exports.Hard = Cursor
-exports.Soft = SoftCursor
+/**
+ * ensure each value is wrapped in a cursor
+ *
+ * @param {Function} fn
+ * @return {Cursor}
+ */
+
+Cursor.prototype.map = function(fn){
+  var list = this.value.map(function(value, key){
+    return fn(this.get(key), key, this)
+  }, this)
+  return new Cursor(list, this.name, this.parent)
+}
+
+/**
+ * Set multiple keys in one transaction
+ *
+ * @param {Object} map
+ * @return {Cursor}
+ */
+
+Cursor.prototype.merge = function(map){
+  var value = this.value
+  for (var key in map) value = value.set(key, map[key])
+  return this.update(value)
+}
+
+Cursor.prototype.toJSON = function() {
+  return this.value.toJSON()
+}
+
+module.exports = RootCursor
+RootCursor.SubCursor = Cursor

@@ -1,18 +1,14 @@
 
-# cursor
+# Cursor
 
-  Enables you to present a subset of a large data structer as if it was the whole thing
+  Enables you to present a subset of a large data structer as if it was the whole thing. Currently very experimental
 
 ## Installation
 
-With [packin](//github.com/jkroso/packin): `packin add jkroso/cursor`
+With [packin](//github.com/jkroso/packin): `packin add jsiom/cursor`
 
 then in your app:
 
 ```js
-var cursor = require('cursor')
+var Cursor = require('cursor')
 ```
-
-## API
-
-### `cursor()`

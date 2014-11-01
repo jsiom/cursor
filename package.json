@@ -17,7 +17,7 @@
     "hydro": "*",
     "jsmd": "*"
   },
-  "repository": "git://github.com/jkroso/cursor.git",
+  "repository": "git://github.com/jsiom/cursor.git",
   "author": "Jake Rosoman",
   "files": ["index.js"],
   "license": "MIT"
