@@ -24,23 +24,7 @@ function Cursor(value, name, parent) {
  */
 
 Cursor.prototype.get = function(key) {
-  var value = this.value.get(key)
-  if (typeof value != 'object') return value
-  return new Cursor(value, key, this)
-}
-
-/**
- * Associate a new value on this cursors data and recur
- * up the cursor tree. Will return a new cursor pointing
- * to the new data
- *
- * @param {String|Number} key
- * @param {Any} value
- * @return {Cursor}
- */
-
-Cursor.prototype.set = function(key, value) {
-  return this.update(this.value.set(key, value))
+  return new Cursor(this.value.get(key), key, this)
 }
 
 /**
@@ -51,8 +35,8 @@ Cursor.prototype.set = function(key, value) {
  */
 
 Cursor.prototype.update = function(newData) {
-  var newParent = this.parent.set(this.name, newData)
-  if (typeof newData != 'object') return newData
+  var data = this.parent.value.set(this.name, newData)
+  var newParent = this.parent.update(data)
   return new Cursor(newData, this.name, newParent)
 }
 
@@ -79,12 +63,7 @@ inherit(RootCursor, Cursor)
 
 RootCursor.prototype.update = function(newValue) {
   this.atom.set(newValue)
-  if (typeof newValue != 'object') return newValue
   return new RootCursor(this.atom)
-}
-
-RootCursor.prototype.set = function(key, value) {
-  return this.update(this.value.set(key, value))
 }
 
 /**
@@ -104,7 +83,9 @@ RootCursor.prototype.set = function(key, value) {
   'slice',
   'every',
   'push',
-  'some'
+  'some',
+  'set',
+  'map'
 ].forEach(function(method){
   Cursor.prototype[method] = function() {
     var value = this.value[method].apply(this.value, arguments)
@@ -125,20 +106,6 @@ Cursor.prototype.commit = function(){
 }
 
 /**
- * ensure each value is wrapped in a cursor
- *
- * @param {Function} fn
- * @return {Cursor}
- */
-
-Cursor.prototype.map = function(fn){
-  var list = this.value.map(function(value, key){
-    return fn(this.get(key), key, this)
-  }, this)
-  return new Cursor(list, this.name, this.parent)
-}
-
-/**
  * Set multiple keys in one transaction
  *
  * @param {Object} map
@@ -148,7 +115,7 @@ Cursor.prototype.map = function(fn){
 Cursor.prototype.merge = function(map){
   var value = this.value
   for (var key in map) value = value.set(key, map[key])
-  return this.update(value)
+  return new Cursor(value, this.name, this.parent)
 }
 
 Cursor.prototype.toJSON = function() {
