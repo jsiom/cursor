@@ -27,7 +27,7 @@ it('set', function(){
 
 it('update', function(done){
   a.addListener(function(newVal, oldVal){
-    assert(eql(oldVal, immutable.fromJS({a:{b:1,c:[1,2,3]}})))
+    assert(eql(oldVal, immutable.fromJS({a:{b:2,c:[1,2,3]}})))
     assert(eql(newVal, immutable.fromJS({a:{b:1,c:2}})))
     done()
   })
