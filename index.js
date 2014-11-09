@@ -74,7 +74,6 @@ Cursor.prototype.toJSON = function() {
  */
 
 ;[
-  'forEach',
   'filter',
   'reduce',
   'remove',
