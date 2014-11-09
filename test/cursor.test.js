@@ -25,11 +25,16 @@ it('set', function(){
   assert(c.get('a').set('b', 2).get('b').value == 2)
 })
 
+it('destroy', function(){
+  c.get('a').get('c').destroy()
+  assert(eql(a.value, immutable.fromJS({a:{b:1}})))
+})
+
 it('update', function(done){
   a.addListener(function(newVal, oldVal){
-    assert(eql(oldVal, immutable.fromJS({a:{b:2,c:[1,2,3]}})))
-    assert(eql(newVal, immutable.fromJS({a:{b:1,c:2}})))
+    assert(eql(oldVal, immutable.fromJS({a:{b:1}})))
+    assert(eql(newVal, immutable.fromJS({a:{b:2,c:[1,2,3]}})))
     done()
   })
-  c.get('a').get('c').update(2)
+  c.get('a').get('b').update(2)
 })

@@ -39,6 +39,18 @@ Cursor.prototype.update = function(newData) {
 }
 
 /**
+ * Remove the Cursors value from the global data structure
+ */
+
+Cursor.prototype.destroy = function(){
+  return this.parent.remove(this.name)
+}
+
+Cursor.prototype.toJSON = function() {
+  return this.value.toJSON()
+}
+
+/**
  * A specialized Cursor to manage the top level atom
  *
  * @param {Atom} atom
@@ -62,10 +74,6 @@ inherit(RootCursor, Cursor)
 RootCursor.prototype.update = function(newValue) {
   this.atom.set(newValue)
   return new RootCursor(this.atom)
-}
-
-Cursor.prototype.toJSON = function() {
-  return this.value.toJSON()
 }
 
 /**
