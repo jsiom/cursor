@@ -15,9 +15,7 @@ function Cursor(value, name, parent) {
 }
 
 /**
- * Get a subset of the cursors data. If it turns out to be
- * another associative structure it will be wrapped in another
- * cursor
+ * Get a cursor to a subset of this cursors value
  *
  * @param {String} key
  * @return {Primitive|Cursor}
@@ -66,12 +64,13 @@ RootCursor.prototype.update = function(newValue) {
   return new RootCursor(this.atom)
 }
 
+Cursor.prototype.toJSON = function() {
+  return this.value.toJSON()
+}
+
 /**
  * Generate proxy methods. Each method will delegate to the
- * cursors value and return the resulting value. If the return
- * value is an associative it will be wrapped in a cursor
- * however changes are never propagated up so if you want to
- * affect the global state you will need to call `commit`
+ * cursors value and update itself with the return value
  */
 
 ;[
@@ -81,46 +80,15 @@ RootCursor.prototype.update = function(newValue) {
   'remove',
   'splice',
   'slice',
-  'every',
+  'merge',
   'push',
-  'some',
   'set',
-  'map'
+  'map',
 ].forEach(function(method){
   Cursor.prototype[method] = function() {
-    var value = this.value[method].apply(this.value, arguments)
-    if (typeof value != 'object') return value
-    return new Cursor(value, this.name, this.parent)
+    return this.update(this.value[method].apply(this.value, arguments))
   }
 })
-
-/**
- * Merge the changes you made to this cursor into the
- * global data structure
- *
- * @return {Cursor}
- */
-
-Cursor.prototype.commit = function(){
-  return this.update(this.value)
-}
-
-/**
- * Set multiple keys in one transaction
- *
- * @param {Object} map
- * @return {Cursor}
- */
-
-Cursor.prototype.merge = function(map){
-  var value = this.value
-  for (var key in map) value = value.set(key, map[key])
-  return new Cursor(value, this.name, this.parent)
-}
-
-Cursor.prototype.toJSON = function() {
-  return this.value.toJSON()
-}
 
 module.exports = RootCursor
 RootCursor.SubCursor = Cursor
