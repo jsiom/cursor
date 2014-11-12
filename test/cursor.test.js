@@ -38,3 +38,7 @@ it('update', function(done){
   })
   c.get('a').get('b').update(2)
 })
+
+it('call', function(){
+  assert(c.get('a').get('b').call(v) == 1)
+})

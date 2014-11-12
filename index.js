@@ -1,3 +1,4 @@
+function identity(data){ return data }
 var inherit = require('inherit')
 
 /**
@@ -39,10 +40,21 @@ Cursor.prototype.update = function(newData) {
 }
 
 /**
+ * Get this cursors value in `data`
+ *
+ * @param {Any} data
+ * @return {Any}
+ */
+
+Cursor.prototype.call = function(data) {
+  return this.parent.call(data).get(this.name)
+}
+
+/**
  * Remove the Cursors value from the global data structure
  */
 
-Cursor.prototype.destroy = function(){
+Cursor.prototype.destroy = function() {
   return this.parent.remove(this.name)
 }
 
@@ -75,6 +87,8 @@ RootCursor.prototype.update = function(newValue) {
   this.atom.set(newValue)
   return new RootCursor(this.atom)
 }
+
+RootCursor.prototype.call = identity
 
 /**
  * Generate proxy methods. Each method will delegate to the
