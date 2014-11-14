@@ -84,6 +84,7 @@ inherit(RootCursor, Cursor)
  */
 
 RootCursor.prototype.update = function(newValue) {
+  if (this.value !== this.atom.value) throw new Error('double update')
   this.atom.set(newValue)
   return new RootCursor(this.atom)
 }
