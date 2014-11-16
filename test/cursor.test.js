@@ -40,6 +40,8 @@ it('call', function(){
 
 it('isCurrent', function(){
   assert(c.isCurrent)
-  c.update(2)
+  assert(c.get('a').isCurrent)
+  c.get('a').update(2)
+  assert(!c.get('a').isCurrent)
   assert(!c.isCurrent)
 })

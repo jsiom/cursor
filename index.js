@@ -58,7 +58,7 @@ Cursor.prototype.destroy = function() {
   return this.parent.remove(this.name)
 }
 
-Object.defineProperty(RootCursor.prototype, 'isCurrent', {
+Object.defineProperty(Cursor.prototype, 'isCurrent', {
   get: function(){ return this.parent.isCurrent }
 })
 
