@@ -58,6 +58,10 @@ Cursor.prototype.destroy = function() {
   return this.parent.remove(this.name)
 }
 
+Object.defineProperty(RootCursor.prototype, 'isCurrent', {
+  get: function(){ return this.parent.isCurrent }
+})
+
 Cursor.prototype.toJSON = function() {
   return this.value.toJSON()
 }
@@ -90,6 +94,10 @@ RootCursor.prototype.update = function(newValue) {
 }
 
 RootCursor.prototype.call = identity
+
+Object.defineProperty(RootCursor.prototype, 'isCurrent', {
+  get: function(){ return this.atom.value === this.value }
+})
 
 /**
  * Generate proxy methods. Each method will delegate to the

@@ -37,3 +37,9 @@ it('destroy', function(){
 it('call', function(){
   assert(c.get('a').get('b').call(v) == 1)
 })
+
+it('isCurrent', function(){
+  assert(c.isCurrent)
+  c.update(2)
+  assert(!c.isCurrent)
+})
