@@ -1,6 +1,3 @@
-function identity(data){ return data }
-var inherit = require('inherit')
-
 /**
  * Present a peice of data as if it was at the top level
  *
@@ -77,7 +74,7 @@ function RootCursor(atom) {
   this.atom = atom
 }
 
-inherit(RootCursor, Cursor)
+RootCursor.prototype = Object.create(Cursor.prototype)
 
 /**
  * Alter the atoms value and return a new RootCursor pointing to
@@ -93,7 +90,7 @@ RootCursor.prototype.update = function(newValue) {
   return new RootCursor(this.atom)
 }
 
-RootCursor.prototype.call = identity
+RootCursor.prototype.call = function identity(data){ return data }
 
 Object.defineProperty(RootCursor.prototype, 'isCurrent', {
   get: function(){ return this.atom.value === this.value }
