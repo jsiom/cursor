@@ -18,7 +18,7 @@
     "jsmd": "*"
   },
   "repository": "git://github.com/jsiom/cursor.git",
+  "files": ["index.js", "soft.js"],
   "author": "Jake Rosoman",
-  "files": ["index.js"],
   "license": "MIT"
 }
