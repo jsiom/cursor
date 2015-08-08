@@ -31,5 +31,26 @@ SoftCursor.prototype.update = function(value) {
   var data = this.atom.value.setIn(this.path, value)
   this.atom.set(data)
 }
+/**
+ * Generate proxy methods. Each method will delegate to the
+ * cursors value and update itself with the return value
+ */
+
+;[
+  'filter',
+  'reduce',
+  'remove',
+  'splice',
+  'slice',
+  'merge',
+  'push',
+  'set',
+  'map',
+].forEach(function(method){
+  SoftCursor.prototype[method] = function() {
+    var value = this.value
+    return this.update(value[method].apply(value, arguments))
+  }
+})
 
 module.exports = SoftCursor
