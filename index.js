@@ -118,6 +118,7 @@ class SymLink {
   'set',
   'map',
 ].forEach(method => {
+  RootCursor.prototype[method] =
   Cursor.prototype[method] = function() {
     var value = this.value
     return this.value = value[method].apply(value, arguments)
