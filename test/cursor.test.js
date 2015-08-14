@@ -1,47 +1,47 @@
-
-var immutable = require('immutable')
-var Atom = require('atom')
-var Cursor = require('..')
-var eql = immutable.is
+const {is,fromJS} = require('immutable')
+const {RootCursor,Cursor,SymLink} = require('..')
+const Atom = require('atom')
 
 var v, a, c
-before(function(){
-  v = immutable.fromJS({a:{b:1, c: [1,2,3]}})
+before(() => {
+  v = fromJS({a:{b:1, c: [1,2,3]}})
   a = new Atom(v)
-  c = new Cursor(a)
+  c = new RootCursor(a)
 })
 
-it('get', function(){
-  assert(c.get('a') instanceof Cursor.SubCursor)
-  assert(c.get('a').get('b') instanceof Cursor.SubCursor)
-  assert(c.get('a').get('c').get(0) instanceof Cursor.SubCursor)
+it('get value', () => {
+  assert(is(c.value, fromJS({a:{b:1,c:[1,2,3]}})))
+  assert(new Cursor(new Cursor(c, 'a'), 'b').value == 1)
+})
+
+it('set value', done => {
+  a.addListener((newVal, oldVal) => {
+    assert(is(oldVal, fromJS({a:{b:1,c:[1,2,3]}})))
+    assert(is(newVal, fromJS({a:{b:2,c:[1,2,3]}})))
+    done()
+  })
+  assert((new Cursor(new Cursor(c, 'a'), 'b').value = 2) == 2)
+})
+
+it('get()', () => {
   assert(c.get('a').get('b').value == 1)
   assert(c.get('a').get('c').get(0).value == 1)
 })
 
-it('update', function(done){
-  a.addListener(function(newVal, oldVal){
-    assert(eql(oldVal, immutable.fromJS({a:{b:1,c:[1,2,3]}})))
-    assert(eql(newVal, immutable.fromJS({a:{b:2,c:[1,2,3]}})))
-    done()
+describe('symlinks', () => {
+  before(() => {
+    c.get('a').get('d').value = new SymLink('../a/e')
+    c.get('a').get('e').value = new SymLink('./c/2')
   })
-  c.get('a').get('b').update(2)
-  assert.throws(function(){ c.update() }, /double update/)
-})
 
-it('destroy', function(){
-  c.get('a').get('c').destroy()
-  assert(eql(a.value, immutable.fromJS({a:{b:1}})))
-})
+  it('get value', () => {
+    assert(c.get('a').get('e').value == 3)
+    assert(c.get('a').get('d').value == 3)
+  })
 
-it('call', function(){
-  assert(c.get('a').get('b').call(v) == 1)
-})
-
-it('isCurrent', function(){
-  assert(c.isCurrent)
-  assert(c.get('a').isCurrent)
-  c.get('a').update(2)
-  assert(!c.get('a').isCurrent)
-  assert(!c.isCurrent)
+  it('set value', () => {
+    assert((c.get('a').get('d').value = 'changed') == 'changed')
+    assert(c.get('a').get('d').value == 'changed')
+    assert(c.get('a').get('c').get(2).value == 'changed')
+  })
 })

@@ -1,9 +1,11 @@
 {
   "name": "cursor",
   "version": "0.1.0",
-  "description": "Enables you to present a subset of a large data structer as if it was the whole thing",
+  "description": "Enables you to present a subset of a large data structure as if it was the whole thing",
   "keywords": ["cursor","immutable"],
-  "dependencies": {},
+  "dependencies": {
+    "babelify": "*"
+  },
   "devDependencies": {
     "assert": "jkroso/assert",
     "serve": "jkroso/serve",
@@ -15,8 +17,12 @@
     "hydro": "*",
     "jsmd": "*"
   },
+  "browserify": {
+    "transform": [["babelify", {"jsxPragma": "JSX","stage":0}]]
+  },
+  "transpile": [["*.js", "!sourcegraph/babel->js", {"jsxPragma": "JSX", "stage": 0}]],
   "repository": "git://github.com/jsiom/cursor.git",
-  "files": ["index.js", "soft.js"],
+  "files": ["index.js"],
   "author": "Jake Rosoman",
   "license": "MIT"
 }
