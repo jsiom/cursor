@@ -29,8 +29,7 @@ class Cursor {
    */
 
   get value() {
-    var cursor = realCursor(this)
-    return cursor.parent.value.get(cursor.key)
+    return this.parent.value.get(this.key)
   }
 
   /**
@@ -42,8 +41,7 @@ class Cursor {
    */
 
   set value(data) {
-    var cursor = realCursor(this)
-    cursor.parent.value = cursor.parent.value.set(cursor.key, data)
+    this.parent.value = this.parent.value.set(this.key, data)
     return data
   }
 
@@ -88,26 +86,12 @@ class RootCursor {
   }
 }
 
-class SymLink {
-  constructor(path) {
-    this.up = 0
-    this.path = []
-    var segments = path.split('/')
-    for (var i = 0; i < segments.length; i++) {
-      var s = segments[i]
-      if (s == '.') continue
-      if (s == '..') this.up++
-      else this.path.push(parse(s))
-    }
-  }
-}
-
 /**
  * Generate proxy methods. Each method will delegate to the
  * cursors value and update itself with the return value
  */
 
-;[
+[
   'filter',
   'reduce',
   'remove',
@@ -125,31 +109,5 @@ class SymLink {
   }
 })
 
-const getKey = (object,key) => object.get(key)
-
-const parse = segment => {
-  var n = Number(segment)
-  return isNaN(n) ? segment : n
-}
-
-/**
- * Resolve symlinks
- *
- * @param  {Cursor} cursor
- * @return {Cursor}
- */
-
-const realCursor = (cursor) => {
-  var v = cursor.parent.value.get(cursor.key)
-  while (v instanceof SymLink) {
-    cursor = cursor.parent
-    var up = v.up
-    while (up-- > 0) cursor = cursor.parent
-    cursor = v.path.reduce(getKey, cursor)
-    v = cursor.parent.value.get(cursor.key)
-  }
-  return cursor
-}
-
 export default RootCursor
-export {Cursor,SymLink,RootCursor}
+export {Cursor,RootCursor}

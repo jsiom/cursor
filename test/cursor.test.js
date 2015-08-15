@@ -1,5 +1,5 @@
 const {is,fromJS} = require('immutable')
-const {RootCursor,Cursor,SymLink} = require('..')
+const {RootCursor,Cursor} = require('..')
 const Atom = require('atom')
 
 var v, a, c
@@ -26,22 +26,4 @@ it('set value', done => {
 it('get()', () => {
   assert(c.get('a').get('b').value == 1)
   assert(c.get('a').get('c').get(0).value == 1)
-})
-
-describe('symlinks', () => {
-  before(() => {
-    c.get('a').get('d').value = new SymLink('../a/e')
-    c.get('a').get('e').value = new SymLink('./c/2')
-  })
-
-  it('get value', () => {
-    assert(c.get('a').get('e').value == 3)
-    assert(c.get('a').get('d').value == 3)
-  })
-
-  it('set value', () => {
-    assert((c.get('a').get('d').value = 'changed') == 'changed')
-    assert(c.get('a').get('d').value == 'changed')
-    assert(c.get('a').get('c').get(2).value == 'changed')
-  })
 })
