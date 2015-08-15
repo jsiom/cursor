@@ -24,6 +24,17 @@ class Cursor {
   }
 
   /**
+   * Like get but can step down several levels at once
+   *
+   * @param  {Any} ...keys
+   * @return {Cursor}
+   */
+
+  getIn(...keys) {
+    return keys.reduce(getKey, this)
+  }
+
+  /**
    * Get the current value this cursor points to
    * @return {Any}
    */
@@ -69,9 +80,6 @@ class RootCursor {
   constructor(atom) {
     this.atom = atom
   }
-  get(key) {
-    return new Cursor(this, key)
-  }
   get value() {
     return this.atom.value
   }
@@ -108,6 +116,11 @@ class RootCursor {
     return this.value = value[method].apply(value, arguments)
   }
 })
+
+RootCursor.prototype.get = Cursor.prototype.get
+RootCursor.prototype.getIn = Cursor.prototype.getIn
+
+const getKey = (object,key) => object.get(key)
 
 export default RootCursor
 export {Cursor,RootCursor}

@@ -27,3 +27,8 @@ it('get()', () => {
   assert(c.get('a').get('b').value == 1)
   assert(c.get('a').get('c').get(0).value == 1)
 })
+
+it('getIn(...keys)', () => {
+  assert(c.getIn('a','b').value == 1)
+  assert(c.getIn('a').getIn('b').value == 1)
+})
