@@ -77,20 +77,30 @@ class Cursor {
 }
 
 class RootCursor {
-  constructor(atom) {
-    this.atom = atom
+  constructor(value) {
+    this._value = value
+    this.onChange = []
   }
   get value() {
-    return this.atom.value
+    return this._value
   }
-  set value(data) {
-    return this.atom.set(data)
+  set value(newValue) {
+    const array = this.onChange
+    const oldValue = this._value
+    this._value = newValue
+    for (var i = 0, len = array.length; i < len; i++) {
+      array[i](newValue, oldValue)
+    }
+    return newValue
   }
   call(data) {
     return data
   }
   destroy() {
-    this.atom.set(null)
+    this._value = null
+  }
+  addListener(fn) {
+    this.onChange.push(fn)
   }
 }
 

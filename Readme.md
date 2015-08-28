@@ -1,11 +1,11 @@
 
 # Cursor
 
-  Enables you to present a subset of a large data structer as if it was the whole thing. Currently very experimental
+Enables you to present a subset of a large data structure as if it was the whole thing
 
 ## Installation
 
-With [packin](//github.com/jkroso/packin): `packin add jsiom/cursor`
+`npm install jsiom/cursor`
 
 then in your app:
 

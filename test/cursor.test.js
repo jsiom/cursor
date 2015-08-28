@@ -1,12 +1,11 @@
-const {is,fromJS} = require('immutable')
 const {RootCursor,Cursor} = require('..')
-const Atom = require('atom')
+const {is,fromJS} = require('immutable')
+const assert = require('assert')
 
-var v, a, c
+var v, c
 before(() => {
   v = fromJS({a:{b:1, c: [1,2,3]}})
-  a = new Atom(v)
-  c = new RootCursor(a)
+  c = new RootCursor(v)
 })
 
 it('get value', () => {
@@ -15,7 +14,7 @@ it('get value', () => {
 })
 
 it('set value', done => {
-  a.addListener((newVal, oldVal) => {
+  c.addListener((newVal, oldVal) => {
     assert(is(oldVal, fromJS({a:{b:1,c:[1,2,3]}})))
     assert(is(newVal, fromJS({a:{b:2,c:[1,2,3]}})))
     done()
