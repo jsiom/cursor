@@ -105,6 +105,23 @@ class RootCursor {
 }
 
 /**
+ * For presenting objects which don't implement get/set methods
+ * for altering their attributes. e.g. Date's
+ */
+
+class ProxyCursor {
+  constructor(parent) {
+    this.parent = parent
+  }
+  get value() {
+    return this.get(this.parent.value)
+  }
+  set value(n) {
+    return this.parent.value = this.set(this.parent.value, n)
+  }
+}
+
+/**
  * Generate proxy methods. Each method will delegate to the
  * cursors value and update itself with the return value
  */
@@ -133,4 +150,4 @@ RootCursor.prototype.getIn = Cursor.prototype.getIn
 const getKey = (object,key) => object.get(key)
 
 export default RootCursor
-export {Cursor,RootCursor}
+export {Cursor,RootCursor,ProxyCursor}
