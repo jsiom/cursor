@@ -3,21 +3,17 @@
   "version": "0.0.0",
   "description": "Enables you to present a subset of a large data structure as if it was the whole thing",
   "keywords": ["cursor","immutable"],
-  "dependencies": {
-    "babelify": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "serve": "jkroso/serve",
     "hydro-html": "*",
     "immutable": "*",
     "hydro-bdd": "*",
     "hydro-dot": "*",
+    "result": "1",
     "hydro": "*"
   },
-  "browserify": {
-    "transform": [["babelify", {"jsxPragma": "JSX","stage":0}]]
-  },
-  "transpile": [["*.js", "!sourcegraph/babel->js", {"jsxPragma": "JSX", "stage": 0}]],
+  "transpile": [["*.js", "!sourcegraph/babel->js", {"stage": 0}]],
   "repository": "git://github.com/jsiom/cursor.git",
   "files": ["index.js"],
   "author": "Jake Rosoman",

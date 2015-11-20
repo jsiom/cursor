@@ -40,7 +40,7 @@ class Cursor {
    */
 
   get value() {
-    return this.parent.value.get(this.key)
+    return getKey(this.parent.value, this.key)
   }
 
   /**
@@ -147,7 +147,10 @@ class ProxyCursor {
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
 
-const getKey = (object,key) => object.get(key)
+const getKey = (object,key) =>
+  typeof object.get == 'function'
+    ? object.get(key)
+    : object[key]
 
 export default RootCursor
 export {Cursor,RootCursor,ProxyCursor}

@@ -1,6 +1,7 @@
-const {RootCursor,Cursor} = require('..')
-const {is,fromJS} = require('immutable')
-const assert = require('assert')
+import {RootCursor,Cursor} from '..'
+import {is,fromJS} from 'immutable'
+import assert from 'assert'
+import {wrap} from 'result'
 
 var v, c
 before(() => {
@@ -25,6 +26,13 @@ it('set value', done => {
 it('get()', () => {
   assert(c.get('a').get('b').value == 1)
   assert(c.get('a').get('c').get(0).value == 1)
+  assert(new RootCursor([1,2,3]).get(0).value == 1)
+})
+
+it('with promises', () => {
+  let c = new RootCursor(fromJS({a:{b:1, c: wrap([1,2,3])}}))
+  let cursor = c.get('a').get('c').get(0)
+  assert(cursor.value.value == 1)
 })
 
 it('getIn(...keys)', () => {
