@@ -9,6 +9,15 @@ before(() => {
   c = new RootCursor(v)
 })
 
+it('removeListener', done => {
+  assert(c.onChange.length == 0)
+  c.addListener(done)
+  assert(c.onChange[0] == done)
+  c.removeListener(done)
+  assert(c.onChange.length == 0)
+  done()
+})
+
 it('get value', () => {
   assert(is(c.value, fromJS({a:{b:1,c:[1,2,3]}})))
   assert(new Cursor(new Cursor(c, 'a'), 'b').value == 1)

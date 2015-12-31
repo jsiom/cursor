@@ -102,6 +102,10 @@ class RootCursor {
   addListener(fn) {
     this.onChange.push(fn)
   }
+  removeListener(fn) {
+    const i = this.onChange.findIndex(f => f === fn)
+    if (i >= 0) this.onChange.splice(i , 1)
+  }
 }
 
 /**
