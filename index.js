@@ -1,3 +1,5 @@
+import {softUnbox} from 'result'
+
 /**
  * Provides a way to focus on parts of a large immutable data structure
  * while still making updates globally available
@@ -6,7 +8,7 @@
  * @param {Any}    key
  */
 
-class Cursor {
+export class Cursor {
   constructor(parent, key) {
     this.parent = parent
     this.key = key
@@ -76,7 +78,7 @@ class Cursor {
   }
 }
 
-class RootCursor {
+export default class RootCursor {
   constructor(value) {
     this._value = value
     this.onChange = []
@@ -113,7 +115,7 @@ class RootCursor {
  * for altering their attributes. e.g. Date's
  */
 
-class ProxyCursor {
+export class ProxyCursor {
   constructor(parent) {
     this.parent = parent
   }
@@ -151,10 +153,9 @@ class ProxyCursor {
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
 
-const getKey = (object,key) =>
-  typeof object.get == 'function'
+const getKey = (object,key) => {
+  const value = typeof object.get == 'function'
     ? object.get(key)
     : object[key]
-
-export default RootCursor
-export {Cursor,RootCursor,ProxyCursor}
+  return softUnbox(value)
+}

@@ -3,14 +3,16 @@
   "version": "0.0.0",
   "description": "Enables you to present a subset of a large data structure as if it was the whole thing",
   "keywords": ["cursor","immutable"],
-  "dependencies": {},
+  "dependencies": {
+    "result": "2"
+  },
   "devDependencies": {
     "serve": "jkroso/serve",
+    "future-node": "0",
     "hydro-html": "*",
-    "immutable": "*",
+    "immutable": "3",
     "hydro-bdd": "*",
     "hydro-dot": "*",
-    "result": "1",
     "hydro": "*"
   },
   "transpile": [["*.js", "!sourcegraph/babel->js", {"stage": 0}]],
