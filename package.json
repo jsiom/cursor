@@ -1,6 +1,6 @@
 {
   "name": "@jkroso/cursor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Enables you to present a subset of a large data structure as if it was the whole thing",
   "keywords": ["cursor","immutable"],
   "dependencies": {
@@ -17,7 +17,7 @@
   },
   "transpile": [["*.js", "!sourcegraph/babel->js", {"stage": 0}]],
   "repository": "git://github.com/jsiom/cursor.git",
-  "files": ["index.js"],
+  "files": ["index.js", "date.js"],
   "author": "Jake Rosoman",
   "license": "MIT"
 }

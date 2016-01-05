@@ -1,4 +1,4 @@
-const {ProxyCursor} = require('./index')
+import {ProxyCursor} from './index'
 
 export class YearProxy extends ProxyCursor {
   get(date) { return date.getFullYear() }
