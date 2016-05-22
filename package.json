@@ -15,7 +15,7 @@
     "hydro-dot": "*",
     "hydro": "*"
   },
-  "transpile": [["*.js", "!sourcegraph/babel->js", {"stage": 0}]],
+  "transpile": [["*.js", "!sourcegraph/babel->js"]],
   "repository": "git://github.com/jsiom/cursor.git",
   "files": ["index.js", "date.js"],
   "author": "Jake Rosoman",
