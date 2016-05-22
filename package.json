@@ -1,6 +1,6 @@
 {
   "name": "@jkroso/cursor",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Enables you to present a subset of a large data structure as if it was the whole thing",
   "keywords": ["cursor","immutable"],
   "dependencies": {
