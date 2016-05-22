@@ -30,6 +30,14 @@ it('set value', done => {
     done()
   })
   assert((new Cursor(new Cursor(c, 'a'), 'b').value = 2) == 2)
+  function Graph(value) {
+    this.edge = value
+  }
+  const a = new Graph('hi')
+  const r = new RootCursor(a)
+  r.get('edge').value = 'bye'
+  assert(a.edge == 'hi')
+  assert(r.get('edge').value == 'bye')
 })
 
 it('get()', () => {

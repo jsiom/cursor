@@ -54,7 +54,7 @@ export class Cursor {
    */
 
   set value(data) {
-    this.parent.value = this.parent.value.set(this.key, data)
+    this.parent.value = setKey(this.parent.value, this.key, data)
     return data
   }
 
@@ -153,9 +153,20 @@ export class ProxyCursor {
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
 
-const getKey = (object,key) => {
+const getKey = (object, key) => {
   const value = typeof object.get == 'function'
     ? object.get(key)
     : object[key]
   return softUnbox(value)
+}
+
+const setKey = (object, key, value) =>
+  typeof object.set == 'function'
+    ? object.set(key, value)
+    : assoc(object, key, value)
+
+const assoc = (object, key, value) => {
+  const o = Object.create(object)
+  o[key] = value
+  return o
 }
