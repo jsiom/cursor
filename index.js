@@ -66,7 +66,7 @@ export class Cursor {
    */
 
   call(data) {
-    return this.parent.call(data).get(this.key)
+    return getKey(this.parent.call(data), this.key)
   }
 
   /**
