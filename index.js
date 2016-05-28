@@ -145,10 +145,25 @@ export class ProxyCursor {
 ].forEach(method => {
   RootCursor.prototype[method] =
   Cursor.prototype[method] = function() {
-    var value = this.value
-    return this.value = value[method].apply(value, arguments)
+    const value = this.value
+    const fn = value[method] || defaults[method]
+    if (typeof fn != 'function') throw new Error(`${method} is not implemented`)
+    return this.value = fn.apply(value, arguments)
   }
 })
+
+const defaults = {
+  merge(b) {
+    const a = Object.create(this)
+    for (var key in b) {
+      a[key] = b[key]
+    }
+    return a
+  },
+  set(key, value) {
+    return setKey(this, key, value)
+  }
+}
 
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
