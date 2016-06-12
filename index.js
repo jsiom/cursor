@@ -33,7 +33,11 @@ export class Cursor {
    */
 
   getIn(...keys) {
-    return keys.reduce(getKey, this)
+    return keys.reduce((cursor, key) => cursor.get(key), this)
+  }
+
+  get root() {
+    return this.parent.root
   }
 
   /**
@@ -42,7 +46,7 @@ export class Cursor {
    */
 
   get value() {
-    return getKey(this.parent.value, this.key)
+    return getKey(this.parent.value, this)
   }
 
   /**
@@ -66,7 +70,7 @@ export class Cursor {
    */
 
   call(data) {
-    return getKey(this.parent.call(data), this.key)
+    return getKey(this.parent.call(data), this)
   }
 
   /**
@@ -82,6 +86,9 @@ export default class RootCursor {
   constructor(value) {
     this._value = value
     this.onChange = []
+  }
+  get root() {
+    return this
   }
   get value() {
     return this._value
@@ -118,6 +125,9 @@ export default class RootCursor {
 export class ProxyCursor {
   constructor(parent) {
     this.parent = parent
+  }
+  get root() {
+    return this.parent.root
   }
   get value() {
     return this.get(this.parent.value)
@@ -168,11 +178,13 @@ const defaults = {
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
 
-const getKey = (object, key) => {
-  const value = typeof object.get == 'function'
-    ? object.get(key)
-    : object[key]
-  return softUnbox(value)
+const getKey = (object, cursor) => {
+  const value = softUnbox(typeof object.get == 'function'
+    ? object.get(cursor.key)
+    : object[cursor.key])
+  return value instanceof Reference
+    ? value.call(cursor.root)
+    : value
 }
 
 const setKey = (object, key, value) =>
@@ -184,4 +196,15 @@ const assoc = (object, key, value) => {
   const o = Object.create(object)
   o[key] = value
   return o
+}
+
+export function Reference(...path) {
+  this.path = path
+}
+
+Reference.prototype.call = function(root) {
+  for (const key of this.path) {
+    root = root.get(key)
+  }
+  return root.value
 }

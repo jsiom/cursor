@@ -1,4 +1,5 @@
-import RootCursor,{Cursor} from '..'
+/* global before, it */
+import RootCursor,{Cursor,Reference} from '..'
 import {is,fromJS} from 'immutable'
 import assert from 'assert'
 import {wrap} from 'result'
@@ -55,4 +56,13 @@ it('with promises', () => {
 it('getIn(...keys)', () => {
   assert(c.getIn('a','b').value == 1)
   assert(c.getIn('a').getIn('b').value == 1)
+})
+
+it('References', () => {
+  const v = {a: {b:1},
+             b: new Reference('a', 'b'),
+             c: new Reference('b')}
+  const c = new RootCursor(v)
+  assert(c.get('b').value == 1)
+  assert(c.get('c').value == 1)
 })
