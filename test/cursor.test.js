@@ -58,11 +58,22 @@ it('getIn(...keys)', () => {
   assert(c.getIn('a').getIn('b').value == 1)
 })
 
-it('References', () => {
+it('get References', () => {
   const v = {a: {b:1},
              b: new Reference('a', 'b'),
              c: new Reference('b')}
   const c = new RootCursor(v)
   assert(c.get('b').value == 1)
   assert(c.get('c').value == 1)
+})
+
+it('set References', () => {
+  const v = {a: {b:1},
+             b: new Reference('a', 'b'),
+             c: new Reference('b')}
+  const c = new RootCursor(v)
+  c.get('b').value = 2
+  assert(c.get('a').get('b').value == 2)
+  c.get('c').value = 3
+  assert(c.get('a').get('b').value == 3)
 })

@@ -46,7 +46,7 @@ export class Cursor {
    */
 
   get value() {
-    return getKey(this.parent.value, this)
+    return getValue(this.parent.value, this)
   }
 
   /**
@@ -58,6 +58,10 @@ export class Cursor {
    */
 
   set value(data) {
+    const value = getKey(this.parent.value, this.key)
+    if (value instanceof Reference) {
+      return getReference(this.root, value).value = data
+    }
     this.parent.value = setKey(this.parent.value, this.key, data)
     return data
   }
@@ -70,7 +74,7 @@ export class Cursor {
    */
 
   call(data) {
-    return getKey(this.parent.call(data), this)
+    return getValue(this.parent.call(data), this)
   }
 
   /**
@@ -178,12 +182,13 @@ const defaults = {
 RootCursor.prototype.get = Cursor.prototype.get
 RootCursor.prototype.getIn = Cursor.prototype.getIn
 
-const getKey = (object, cursor) => {
-  const value = softUnbox(typeof object.get == 'function'
-    ? object.get(cursor.key)
-    : object[cursor.key])
+const getKey = (object, key) =>
+  softUnbox(typeof object.get == 'function'? object.get(key) : object[key])
+
+const getValue = (object, cursor) => {
+  const value = getKey(object, cursor.key)
   return value instanceof Reference
-    ? value.call(cursor.root)
+    ? getReference(cursor.root, value).value
     : value
 }
 
@@ -202,9 +207,7 @@ export function Reference(...path) {
   this.path = path
 }
 
-Reference.prototype.call = function(root) {
-  for (const key of this.path) {
-    root = root.get(key)
-  }
-  return root.value
+const getReference = (root, ref) => {
+  for (const key of ref.path) root = root.get(key)
+  return root
 }
