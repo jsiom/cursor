@@ -9,9 +9,10 @@ import {softUnbox} from 'result'
  */
 
 export class Cursor {
-  constructor(parent, key) {
+  constructor(parent, key, fallback) {
     this.parent = parent
     this.key = key
+    this.fallback = fallback
   }
 
   /**
@@ -21,8 +22,8 @@ export class Cursor {
    * @return {Cursor}
    */
 
-  get(key) {
-    return new Cursor(this, key)
+  get(key, fallback) {
+    return new Cursor(this, key, fallback)
   }
 
   /**
@@ -189,7 +190,7 @@ const getValue = (object, cursor) => {
   const value = getKey(object, cursor.key)
   return value instanceof Reference
     ? getReference(cursor.root, value).value
-    : value
+    : value === undefined ? cursor.fallback : value
 }
 
 const setKey = (object, key, value) =>

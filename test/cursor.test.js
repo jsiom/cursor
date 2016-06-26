@@ -77,3 +77,7 @@ it('set References', () => {
   c.get('c').value = 3
   assert(c.get('a').get('b').value == 3)
 })
+
+it('defaults', () => {
+  assert(new RootCursor({}).get('a', 1).value == 1)
+})
